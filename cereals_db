@@ -1,0 +1,88 @@
+-- ------------------------------------CREATE A DATABASE FOR OUR PROJECT---------------------------------------------
+CREATE DATABASE IF NOT EXISTS CEREALS_DB;
+SHOW DATABASES;
+USE CEREALS_DB;
+-- -----------------------------------CREATE TABLE CEREALS---------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS CEREALS 
+(
+`NAME` VARCHAR(70) NOT NULL,
+MANUFACTURER CHAR(1) NOT NULL,
+`TYPE` CHAR(1) NOT NULL,
+CALORIES INT UNSIGNED  NOT NULL,
+PROTEIN INT UNSIGNED NOT NULL,
+FAT INT UNSIGNED NOT NULL,
+SODIUM INT UNSIGNED NOT NULL,
+FIBER DECIMAL(3,1) NOT NULL,
+CARBO DECIMAL(3,1) NOT NULL,
+SUGARS INT NOT NULL,
+POTASS INT NOT NULL,
+VITAMINS INT NOT NULL,
+SHELF INT  UNSIGNED NOT NULL,
+WEIGHT DECIMAL(3,2) NOT NULL,
+CUPS DECIMAL(3,2) NOT NULL,
+RATING DECIMAL(10,6) NOT NULL
+);
+-- ------------------------------------------------DESCRIBE PRODUCT TABLE------------------------------------------
+DESCRIBE CEREALS;
+
+-- -----------------------------------------IMPORT OUR CSV DATASET TO SQL AND CHECKING ---------------------------------
+SELECT * FROM CEREALS;
+
+-- -------------------------------------- -------DATA CLEANING AND EXPLORATION---------------------------------------------
+-- -------------------------------renaming columns with more descriptive names------------------------------------------
+
+ALTER TABLE CEREALS RENAME COLUMN CARBO TO CARBOHYDRATES;
+ALTER TABLE CEREALS RENAME COLUMN POTASS TO POTASSIUM;
+SELECT * FROM CEREALS;
+
+-- ------------------------------------------check for max and min values in all columns ----------------------------------------------------
+SELECT MAX(CALORIES) AS MAX,MIN(CALORIES) AS MIN  FROM CEREALS;
+SELECT MAX(PROTEIN) AS MAX,MIN(PROTEIN) AS MIN  FROM CEREALS;
+SELECT MAX(FAT) AS MAX,MIN(FAT) AS MIN  FROM CEREALS;
+SELECT MAX(SODIUM) AS MAX,MIN(SODIUM) AS MIN  FROM CEREALS;
+SELECT MAX(FIBER) AS MAX,MIN(FIBER) AS MIN  FROM CEREALS;
+SELECT MAX(SODIUM) AS MAX,MIN(SODIUM) AS MIN  FROM CEREALS;
+SELECT MAX(FIBER) AS MAX,MIN(FIBER) AS MIN  FROM CEREALS;
+SELECT MAX(CARBOHYDRATES) AS MAX,MIN(CARBOHYDRATES) AS MIN  FROM CEREALS;
+SELECT MAX(SUGARS) AS MAX,MIN(SUGARS) AS MIN  FROM CEREALS;
+SELECT MAX(POTASSIUM) AS MAX,MIN(POTASSIUM) AS MIN  FROM CEREALS;
+SELECT MAX(VITAMINS) AS MAX,MIN(VITAMINS) AS MIN  FROM CEREALS;
+SELECT MAX(SHELF) AS MAX,MIN(SHELF) AS MIN  FROM CEREALS;
+SELECT MAX(WEIGHT) AS MAX,MIN(WEIGHT) AS MIN  FROM CEREALS;
+SELECT MAX(CUPS) AS MAX,MIN(CUPS) AS MIN  FROM CEREALS;
+SELECT MAX(RATING) AS MAX,MIN(RATING) AS MIN  FROM CEREALS;
+
+-- --------------------------------------------exploring and dropping columns with negative values--------------------------------
+SELECT COUNT(*) FROM CEREALS WHERE CARBOHYDRATES=-1;
+SELECT COUNT(*) FROM CEREALS WHERE SUGARS=-1;
+SELECT COUNT(*) FROM CEREALS WHERE POTASSIUM=-1;
+
+DELETE FROM CEREALS WHERE CARBOHYDRATES=-1;
+DELETE FROM CEREALS WHERE SUGARS=-1;
+DELETE FROM CEREALS WHERE POTASSIUM=-1;
+
+-- -------------------------------------------ANALYZING OUR DATASET TO EXTRACT INSIGHTS------------------------------------------------------
+
+-- 1. ----------------------------What is the average content of each nutrient and element per manufacturer----------------------------------
+  
+SELECT MANUFACTURER,AVG(CALORIES) AS CALORIES,AVG(PROTEIN) AS PROTEIN,AVG(FAT) AS FAT,AVG(SODIUM) AS SODIUM,AVG(FIBER)
+ AS FIBER,AVG(CARBOHYDRATES) AS CARBOHYDRATES,AVG(SUGARS) AS SUGARS,AVG(POTASSIUM) AS POTASSIUM, AVG(VITAMINS) AS VITAMINS
+ FROM CEREALS GROUP BY MANUFACTURER;
+ 
+ -- 2. --------------------------What is the number of calories per ounce for each product?---------------------------------------------------
+   
+ SELECT NAME, CALORIES/218.75 AS OUNCES FROM CEREALS;
+ 
+ -- 3. ---------------------What is the average rating per manufacturer? Is it somehow connected to average nutrient content?------------------
+   
+ SELECT MANUFACTURER,AVG(RATING) AS `AVERAGE RATINGS` FROM CEREALS GROUP BY MANUFACTURER ORDER BY `AVERAGE RATINGS` DESC;
+ 
+ -- 4.----------------------------------------------Which manufacturer possesses the best shelf location?---------------------------------------
+   
+ SELECT MANUFACTURER, ROUND(AVG(SHELF),0) AS `AVERAGE SHELF` FROM CEREALS GROUP BY MANUFACTURER ORDER BY `AVERAGE SHELF` DESC LIMIT 1;
+ 
+ -- 5.---------------------What is the nutritional value of each cereal according to protein, fat, and carbohydrate data.-----------------------
+   
+ SELECT NAME, PROTEIN, FAT, CARBOHYDRATES FROM CEREALS;
+
